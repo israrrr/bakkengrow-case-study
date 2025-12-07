@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Study: Bakkengrow | Israr Studio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- 1. CORE VARIABLES --- */
+        :root {
+            --bg-color: #050505;
+            --glass: rgba(20, 20, 20, 0.75);
+            --border: rgba(255, 255, 255, 0.1);
+
+            /* TYPOGRAPHY HIERARCHY */
+            --text-primary: #ffffff;
+            /* Headings (Focus) */
+            --text-body: #b0b0b0;
+            /* Body (Context - Receded) */
+            --text-mute: #666666;
+            /* Meta (Details) */
+            --text-accent: #40916c;
+            /* Tags (Wayfinding) */
+
+            --accent-purple: #5a189a;
+            /* Source: 115 */
+            --accent-green: #40916c;
+            /* Source: 119 */
+            --accent-blue: #007766;
+            /* Source: 123 */
+            --terminal-green: #00ff41;
+
+            --font-head: 'Manrope', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+
+            /* SPACING TOKENS */
+            --space-section: 12rem;
+            --space-card: 3rem;
+            --space-grid: 4rem;
+        }
+
+        /* --- 2. GLOBAL RESET --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-body);
+            font-family: var(--font-body);
+            line-height: 1.75;
+            font-size: 1.05rem;
+            overflow-x: hidden;
+            /* Technical Grid Background */
+            background-image:
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            background-position: center top;
+        }
+
+        /* Noise Texture */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* --- 3. ANIMATIONS (GLOBAL) --- */
+        @keyframes paperSnapLoop {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-10deg);
+            }
+
+            10% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+
+            90% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        @keyframes slideInLoop {
+            0% {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            15% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            90% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(0);
+            }
+        }
+
+        /* --- 4. PRELOADER --- */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background-color: #050505;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out, visibility 0.8s;
+        }
+
+        #loader.loaded {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-svg {
+            width: 120px;
+            height: auto;
+        }
+
+        /* --- 5. TYPOGRAPHY --- */
+        h1 {
+            font-family: var(--font-head);
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        h2 {
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 {
+            font-family: var(--font-head);
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.01em;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: var(--text-body);
+            font-weight: 400;
+            max-width: 65ch;
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-accent);
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .mono-dim {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-mute);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .quote-block {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-family: var(--font-head);
+            font-weight: 300;
+            line-height: 1.2;
+            margin: 3rem 0;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        /* --- 6. LAYOUT UTILS --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+        }
+
+        section {
+            padding: var(--space-section) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: var(--space-card);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-4px);
+        }
+
+        .crosshair {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-top: 1px solid #666;
+            border-left: 1px solid #666;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .tl {
+            top: -1px;
+            left: -1px;
+        }
+
+        .br {
+            bottom: -1px;
+            right: -1px;
+            border: none;
+            border-bottom: 1px solid #666;
+            border-right: 1px solid #666;
+        }
+
+        /* --- 7. NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: transparent;
+            backdrop-filter: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 3rem;
+        }
+
+        .logo {
+            font-family: var(--font-head);
+            font-weight: 800;
+            font-size: 1.2rem;
+            text-decoration: none;
+            color: #fff;
+            cursor: pointer;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-mute);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: #fff;
+        }
+
+        .nav-links a.active {
+            border-bottom: 2px solid var(--accent-green);
+        }
+
+        /* --- 8. HERO SECTION --- */
+        .hero {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hero-video-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 5, 0.4);
+        }
+
+        .hero-video-container img,
+        .hero-video-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding-top: 6rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        /* HERO SVG LOGO */
+        .hero-logo-svg {
+            width: 100%;
+            max-width: 800px;
+            margin: 1.5rem 0;
+            display: block;
+        }
+
+        /* Hero SVG specific classes */
+        .logo-shape {
+            fill: #5a189a;
+        }
+
+        .logo-text {
+            fill: #ffffff;
+            font-size: 57px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-style: italic;
+        }
+
+        .k-kern {
+            letter-spacing: -0.02em;
+        }
+
+        .fold-path {
+            opacity: 0;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+
+        .hero-text-group {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+
+        .fold-1 {
+            animation: paperSnapLoop 6s ease-in-out infinite;
+            animation-delay: 0.1s;
+        }
+
+        .fold-2 {
+            animation: paperSnapLoop 6s ease-in-out infinite;
+            animation-delay: 0.2s;
+        }
+
+        .fold-3 {
+            animation: paperSnapLoop 6s ease-in-out infinite;
+            animation-delay: 0.3s;
+        }
+
+        .fold-4 {
+            animation: paperSnapLoop 6s ease-in-out infinite;
+            animation-delay: 0.4s;
+        }
+
+        .hero-text-group {
+            animation: slideInLoop 6s ease-in-out infinite;
+            animation-delay: 0.6s;
+        }
+
+        .hero-meta {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 2rem;
+        }
+
+        .hero-meta div {
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        /* --- 9. SECTION STYLES --- */
+        .intel-layout {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: var(--space-grid);
+            margin-top: 4rem;
+        }
+
+        .redacted-wrapper {
+            position: relative;
+            font-family: var(--font-mono);
+        }
+
+        .redacted-stamp {
+            position: absolute;
+            top: -25px;
+            right: 0;
+            border: 2px solid red;
+            color: red;
+            padding: 4px 12px;
+            font-weight: bold;
+            transform: rotate(-5deg);
+            font-size: 0.8rem;
+            background: #000;
+            letter-spacing: 0.1em;
+        }
+
+        .redacted {
+            background-color: #fff;
+            color: transparent;
+            cursor: help;
+            transition: 0.3s;
+            padding: 0 6px;
+        }
+
+        .redacted:hover {
+            background-color: transparent;
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding: 1.2rem 0;
+            font-size: 0.95rem;
+        }
+
+        .data-row span:last-child {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .investigation-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .concept-card {
+            position: relative;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .concept-card:hover {
+            opacity: 1;
+        }
+
+        .concept-card.selected {
+            opacity: 1;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 30px rgba(64, 145, 108, 0.1);
+        }
+
+        .stamp {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            padding: 0.3rem 0.8rem;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            border: 1px solid;
+        }
+
+        .stamp.rej {
+            color: #ff3333;
+            transform: rotate(15deg);
+        }
+
+        .stamp.sel {
+            color: var(--accent-green);
+        }
+
+        .split-pivot {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border: 1px solid var(--border);
+            margin-bottom: 4rem;
+        }
+
+        .pivot-side {
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .pivot-old {
+            background: #0a0a0a;
+            border-right: 1px solid var(--border);
+            opacity: 0.6;
+        }
+
+        .pivot-new {
+            background: linear-gradient(135deg, rgba(64, 145, 108, 0.1), transparent);
+        }
+
+        .etymology-box {
+            background: linear-gradient(90deg, rgba(90, 24, 154, 0.1), transparent);
+            border-left: 4px solid var(--accent-purple);
+            padding: 3rem;
+            margin-top: 3rem;
+        }
+
+        .word-bridge {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .bridge-step {
+            font-size: 1.8rem;
+            font-family: var(--font-head);
+            font-weight: 300;
+            color: #fff;
+        }
+
+        .scrolly-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6rem;
+            align-items: start;
+            margin-top: 4rem;
+        }
+
+        .scrolly-visual {
+            position: sticky;
+            top: 20vh;
+            height: 60vh;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .scrolly-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 0.3rem;
+            transition: opacity 0.6s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        .scrolly-visual img.active {
+            opacity: 1;
+        }
+
+        .steps-wrapper {
+            padding-bottom: 10vh;
+        }
+
+        .step-card {
+            margin-bottom: 40vh;
+            opacity: 0.3;
+            transition: 0.5s;
+            cursor: default;
+        }
+
+        .step-card.active {
+            opacity: 1;
+            border-color: var(--accent-green);
+            transform: translateX(10px);
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: 350px 280px 280px;
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .bento-item {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 0;
+        }
+
+        .item-logo {
+            grid-column: span 2;
+            background: #000;
+        }
+
+        .item-patterns {
+            grid-column: span 2;
+            background: #111;
+        }
+
+        .item-font {
+            grid-column: span 2;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .item-color {
+            grid-column: span 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .item-icons {
+            grid-column: span 1;
+            padding: 2rem;
+        }
+
+        .bento-content {
+            padding: 2rem;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, #000 0%, transparent 100%);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .bento-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+            z-index: 1;
+            opacity: 0.6;
+        }
+
+        .bento-item:hover .bento-bg {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+
+        .bento-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.95));
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .grad-purple {
+            background: linear-gradient(90deg, #3c096c 0%, #9d4edd 100%);
+        }
+
+        .grad-green {
+            background: linear-gradient(90deg, #1b4332 0%, #40916c 100%);
+        }
+
+        .grad-blue {
+            background: linear-gradient(90deg, #224a5f 0%, #227fb1 100%);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .gallery-item {
+            position: relative;
+            border: 1px solid var(--border);
+            height: 450px;
+            overflow: hidden;
+        }
+
+        .gallery-item.wide {
+            grid-column: span 2;
+            height: 600px;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+            opacity: 0.8;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.03);
+            opacity: 1;
+        }
+
+        .gallery-label {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: #000;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            z-index: 2;
+        }
+
+        /* --- 10. TERMINAL & WITNESS --- */
+        .terminal-window {
+            background: #000;
+            border: 1px solid #333;
+            font-family: var(--font-mono);
+            padding: 3rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            margin-top: 4rem;
+        }
+
+        .term-header {
+            border-bottom: 1px solid #333;
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #555;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #333;
+        }
+
+        .term-body {
+            color: var(--terminal-green);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* --- 11. FOOTER (Split Layout) --- */
+        #profile {
+            border-top: 1px solid var(--border);
+            padding: 8rem 0;
+            background: #000;
+        }
+
+        .footer-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: flex-end;
+        }
+
+        .footer-left {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            text-align: right;
+            gap: 2rem;
+        }
+
+        .contact-link {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        .contact-link:hover {
+            color: var(--accent-green);
+        }
+
+        .contact-link span {
+            font-size: 0.8rem;
+            color: var(--text-mute);
+            font-family: var(--font-mono);
+            display: block;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* UTILS */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            :root {
+                --space-section: 6rem;
+                --space-card: 1.5rem;
+                --space-grid: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+            }
+
+            .hero-meta,
+            .intel-layout,
+            .investigation-grid,
+            .split-pivot,
+            .scrolly-container,
+            .bento-grid,
+            .gallery-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+
+            .item-logo,
+            .item-patterns,
+            .item-font,
+            .item-color,
+            .item-icons,
+            .gallery-item.wide {
+                grid-column: span 1;
+                min-height: 250px;
+            }
+
+            .scrolly-visual {
+                position: relative;
+                top: 0;
+                height: 300px;
+                margin-bottom: 3rem;
+            }
+
+            .step-card {
+                margin-bottom: 3rem;
+                opacity: 1;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+                padding: 1rem;
+                background: rgba(5, 5, 5, 0.95);
+            }
+
+            .nav-links {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 5px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .nav-links::-webkit-scrollbar {
+                display: none;
+            }
+
+            .footer-layout {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .footer-right {
+                align-items: flex-start;
+                text-align: left;
+            }
+        }
+
+        @media (hover: none) {
+            .redacted {
+                color: #aaa;
+                background: rgba(255, 255, 255, 0.1);
+                text-decoration: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loader">
+        <svg class="loader-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 115" style="overflow: visible;">
+            <g id="Icon_Container">
+                <path class="logo-shape fold-path fold-1"
+                    d="M38.16,39.66V73a2.35,2.35,0,0,1-2.35,2.35H2.05l25.32-38h8.44A2.35,2.35,0,0,1,38.16,39.66Z" />
+                <path class="logo-shape fold-path fold-2"
+                    d="M37.48.09A.3.3,0,0,1,38,.3V16.74a6,6,0,0,1-1,3.36L25.5,37.31l-.17.26L.72,74.49A.39.39,0,0,1,0,74.27V40.18a6.29,6.29,0,0,1,1.84-4.45Z" />
+                <path class="logo-shape fold-path fold-3"
+                    d="M48.57,72.65V39.37A2.36,2.36,0,0,1,50.92,37H84.69L59.36,75H50.92A2.35,2.35,0,0,1,48.57,72.65Z" />
+                <path class="logo-shape fold-path fold-4"
+                    d="M49.25,112.23a.29.29,0,0,1-.5-.21V95.57a6,6,0,0,1-1-3.36L61.23,75l.18-.26L86,37.83a.39.39,0,0,1,.72.21v34.1a6.3,6.3,0,0,1-1.85,4.45Z" />
+            </g>
+        </svg>
+    </div>
+
+    <nav>
+        <a href="#" class="logo" onclick="window.scrollTo(0,0); return false;">ISRAR STUDIO</a>
+        <div class="nav-links">
+            <a href="#intel">Evidence</a>
+            <a href="#strategy">Strategy</a>
+            <a href="#concept">Concept</a>
+            <a href="#visuals">System</a>
+            <a href="#evidence-locker">Applications</a>
+            <a href="#profile">Profile</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-video-container">
+            <!--IMAGE-->
+            <img src="assets/hero.webp" alt="Abstract Background">
+            <!--VIDEO-->
+            <!--<video autoplay muted loop playsinline>
+                <source src="https://assets.israr.studio/case-studies/bakengrow/hero-video.mp4" type="video/mp4">
+                Your browser does not support the video tag.-->
+        </div>
+
+        <div class="hero-content container reveal-up">
+            <div class="mono">// CASE STUDY 2024-BG</div>
+
+            <svg class="hero-logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 471.25 112.31"
+                style="overflow: visible;">
+                <g id="Logo_Container_Hero">
+                    <path class="logo-shape fold-path fold-1"
+                        d="M38.16,39.66V73a2.35,2.35,0,0,1-2.35,2.35H2.05l25.32-38h8.44A2.35,2.35,0,0,1,38.16,39.66Z" />
+                    <path class="logo-shape fold-path fold-2"
+                        d="M37.48.09A.3.3,0,0,1,38,.3V16.74a6,6,0,0,1-1,3.36L25.5,37.31l-.17.26L.72,74.49A.39.39,0,0,1,0,74.27V40.18a6.29,6.29,0,0,1,1.84-4.45Z" />
+                    <path class="logo-shape fold-path fold-3"
+                        d="M48.57,72.65V39.37A2.36,2.36,0,0,1,50.92,37H84.69L59.36,75H50.92A2.35,2.35,0,0,1,48.57,72.65Z" />
+                    <path class="logo-shape fold-path fold-4"
+                        d="M49.25,112.23a.29.29,0,0,1-.5-.21V95.57a6,6,0,0,1-1-3.36L61.23,75l.18-.26L86,37.83a.39.39,0,0,1,.72.21v34.1a6.3,6.3,0,0,1-1.85,4.45Z" />
+                    <g id="text-group" class="hero-text-group">
+                        <text class="logo-text" transform="translate(120.13 75.75)">
+                            bak<tspan class="k-kern" x="101.97" y="0">k</tspan>
+                            <tspan x="134.69" y="0">engrow</tspan>
+                        </text>
+                    </g>
+                </g>
+            </svg>
+
+            <p style="font-size: 1.2rem; max-width: 600px; color: white; margin-top: 1rem;">Building trust in India's
+                skeptical crypto investment market through strategic positioning and cultural insight.</p>
+
+            <div class="hero-meta">
+                <div>
+                    <div class="mono-dim">ROLE</div>Brand Strategist & Identity Designer
+                </div>
+                <div>
+                    <div class="mono-dim">CLIENT</div>Asset Management Startup
+                </div>
+                <div>
+                    <div class="mono-dim">LOCATION</div>India
+                </div>
+                <div>
+                    <div class="mono-dim">TIMELINE</div>4 Weeks
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="intel" class="container">
+        <div class="reveal-up">
+            <div class="mono">01 // THE DIAGNOSIS</div>
+            <h2>The "Trust Deficit"</h2>
+        </div>
+        <div class="intel-layout reveal-up">
+            <div class="glass-card redacted-wrapper">
+                <div class="crosshair tl"></div>
+                <div class="redacted-stamp">CLASSIFIED</div>
+                <p class="mono-dim" style="margin-bottom: 2rem;">SUBJECT: TRUST BARRIERS</p>
+                <p style="line-height: 2;">
+                    The target audience viewed crypto as <span class="redacted">risky speculation and gambling</span>.
+                    The founders used a <span class="redacted">generic logo from a hosting platform</span>. This created
+                    an <span class="redacted">Amateur Identity</span> that looked like a side project. </p>
+                <p style="margin-top: 3rem; color: var(--accent-green); font-size: 0.8rem;">>> HOVER TO REVEAL EVIDENCE
+                </p>
+            </div>
+            <div class="glass-card">
+                <div class="mono" style="margin-bottom: 2rem;">TARGET PROFILE: YOUNG PROS</div>
+                <div class="data-row"><span class="mono-dim">AGE</span> <span>25 - 45 Years</span></div>
+                <div class="data-row"><span class="mono-dim">PSYCHOLOGY</span> <span>Risk Averse</span></div>
+                <div class="data-row"><span class="mono-dim">FEAR</span> <span>Crypto Skepticism</span></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="investigation" class="container">
+        <div class="reveal-up">
+            <div class="mono">02 // ELIMINATION ROUND</div>
+            <h2>The Investigation</h2>
+            <p style="color: var(--text-mute);">We eliminated weak evidence to find the truth.</p>
+        </div>
+        <div class="investigation-grid reveal-up">
+            <div class="glass-card concept-card">
+                <div class="stamp rej">REJECTED</div>
+                <div class="mono-dim">CONCEPT A</div>
+                <h3 style="margin: 1rem 0;">Minimalist "BG"</h3>
+                <p style="font-size: 0.9rem; color: #888;">Generic lettermark.</p>
+                <div
+                    style="margin-top: 2rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #ff5555;">
+                    FAIL: Doesn't build trust.</div>
+            </div>
+            <div class="glass-card concept-card">
+                <div class="stamp rej">REJECTED</div>
+                <div class="mono-dim">CONCEPT B</div>
+                <h3 style="margin: 1rem 0;">Growth Arrows</h3>
+                <p style="font-size: 0.9rem; color: #888;">Double "K" arrows.</p>
+                <div
+                    style="margin-top: 2rem; border-top: 1px solid #333; padding-top: 1rem; font-size: 0.8rem; color: #ff5555;">
+                    FAIL: Reads as "Less Than".</div>
+            </div>
+            <div class="glass-card concept-card selected">
+                <div class="stamp sel">SELECTED</div>
+                <div class="mono-dim">CONCEPT C</div>
+                <h3 style="margin: 1rem 0;">Origami + Quotes</h3>
+                <p style="font-size: 0.9rem; color: #fff;">Multi-layered symbolism.</p>
+                <ul style="margin-top: 2rem; font-size: 0.8rem; padding-left: 1rem; color: var(--accent-green);">
+                    <li>Layer 1: Quotation Marks = Thinking</li>
+                    <li>Layer 2: Origami = Transformation</li>
+                    <li>Layer 3: Future-Ready (Coin Shape)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="strategy" class="container">
+        <div class="reveal-up">
+            <div class="mono">03 // PSYCHOLOGICAL PIVOT</div>
+            <h2 style="margin-bottom: 3rem;">Reframing the Narrative</h2>
+            <div class="split-pivot">
+                <div class="pivot-side pivot-old">
+                    <div class="mono-dim">OLD MINDSET</div>
+                    <h3 style="font-size: 2rem; margin: 1.5rem 0; color: #888;">"Gambling"</h3>
+                    <p style="color: #666;">Impulsive decisions.<br>Driven by greed.<br>Fear of loss.</p>
+                </div>
+                <div class="pivot-side pivot-new">
+                    <div class="mono">NEW STRATEGY</div>
+                    <h3 style="font-size: 2rem; margin: 1.5rem 0;">"Breadwinner"</h3>
+                    <p>Driven by responsibility.<br>Not for dopamin hits.<br>Calculated steps.</p>
+                </div>
+            </div>
+            <div class="etymology-box glass-card">
+                <p class="mono-dim">LINGUISTIC HOOK</p>
+                <div class="word-bridge">
+                    <div>
+                        <div class="bridge-step">"Bakken"</div>
+                        <div style="font-size: 0.8rem; color: #888;">(Dutch) To Bake</div>
+                    </div>
+                    <div style="color: var(--accent-purple);">→</div>
+                    <div>
+                        <div class="bridge-step">Bread Dough</div>
+                        <div style="font-size: 0.8rem; color: #888;">Growth & Nourishment</div>
+                    </div>
+                    <div style="color: var(--accent-purple);">→</div>
+                    <div>
+                        <div class="bridge-step" style="color: var(--accent-green);">"Breadwinner"</div>
+                        <div style="font-size: 0.8rem; color: #888;">Provider / Responsibility</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="concept" class="container">
+        <div class="mono">04 // VISUAL CONSTRUCTION</div>
+        <h2 style="margin-bottom: 4rem;">Your money, Your choice...</h2>
+        <div class="scrolly-container">
+            <div class="scrolly-visual">
+                <img id="img-1" class="active" src="assets/L01.webp" alt="Quotes">
+                <img id="img-2" src="assets/L02.webp" alt="Origami">
+                <img id="img-3" src="assets/L03.webp" alt="Coin">
+            </div>
+            <div class="steps-wrapper">
+                <div class="glass-card step-card" data-img="img-1">
+                    <div class="mono" style="color: var(--accent-purple);">LAYER 1</div>
+                    <h3>Quotation Marks</h3>
+                    <p style="color: var(--text-mute);">The "b" and "g" resemble quotes. Represents thinking and wisdom.
+                    </p>
+                </div>
+                <div class="glass-card step-card" data-img="img-2">
+                    <div class="mono" style="color: var(--accent-green);">LAYER 2</div>
+                    <h3>Origami Fold</h3>
+                    <p style="color: var(--text-mute);">Paper folding into new forms. "Shaping your money at your own
+                        will."</p>
+                </div>
+                <div class="glass-card step-card" data-img="img-3">
+                    <div class="mono" style="color: #ffd700;">LAYER 3</div>
+                    <h3>Future Coin</h3>
+                    <p style="color: var(--text-mute);">Negative space adapts into a circular coin shape, preparing for token launch.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="visuals" class="container">
+        <div class="reveal-up">
+            <div class="mono">05 // VISUAL SYSTEM</div>
+            <h2>The System</h2>
+            <div class="bento-grid">
+
+                <div class="glass-card bento-item item-logo reveal-up">
+                    <img class="bento-bg" src="assets/construction.webp" alt="Logo">
+                    <div class="bento-content">
+                        <div class="mono">MARK and Construction</div>
+                    </div>
+                </div>
+
+                <div class="glass-card bento-item item-patterns reveal-up">
+                    <img class="bento-bg" src="assets/pattern.webp" alt="Patterns">
+                    <div class="bento-content">
+                        <div class="mono">PATTERN SYSTEM</div>
+                    </div>
+                </div>
+
+                <div class="glass-card bento-item item-font reveal-up">
+                    <div class="bento-overlay"></div> <img class="bento-bg" src="assets/typo01.webp" alt="Magistral">
+                    <div style="position:relative; z-index:3;">
+                        <div class="crosshair tl"></div>
+                        <div class="mono-dim">Primary</div>
+                        <h2
+                            style="font-family: 'Manrope', sans-serif; font-size: 3.5rem; line-height: 1; margin: 1rem 0;">
+                            Aa</h2>
+                        <div>
+                            <div class="mono" style="color: #fff;">MAGISTRAL</div>
+                            <p style="color: var(--text-mute); font-size: 0.9rem;">Geometric Authority. <br> Bold,
+                                geometric, contemporary.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card bento-item item-font reveal-up">
+                    <div class="bento-overlay"></div> <img class="bento-bg" src="assets/typo02.webp" alt="Montserrat">
+                    <div style="position:relative; z-index:3;">
+                        <div class="crosshair br"></div>
+                        <div class="mono-dim">Secondary</div>
+                        <h2
+                            style="font-family: 'Inter', sans-serif; font-weight: 300; font-size: 3.5rem; line-height: 1; margin: 1rem 0;">
+                            Aa</h2>
+                        <div>
+                            <div class="mono" style="color: #fff;">MONTSERRAT</div>
+                            <p style="color: var(--text-mute); font-size: 0.9rem;">Humanist Clarity. <br>Clean,
+                                humanist, highly readable.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-item item-color grad-purple reveal-up">
+                    <div class="mono" style="color: #fff; opacity: 0.8;">Purple Spectrum<br>#5a189a</div>
+                    <div class="mono-dim" style="color: #fff;">Medium → Lavender<br>Independence & Innovation</div>
+                </div>
+                <div class="bento-item item-color grad-green reveal-up">
+                    <div class="mono" style="color: #fff; opacity: 0.8;">Green Spectrum<br>#40916c</div>
+                    <div class="mono-dim" style="color: #fff;">Sage → Mint<br>Growth & Prosperity</div>
+                </div>
+                <div class="bento-item item-color grad-blue reveal-up">
+                    <div class="mono" style="color: #fff; opacity: 0.8;">Blue Spectrum<br>#0077b6</div>
+                    <div class="mono-dim" style="color: #fff;">Sky → Pale<br>Trust & Security</div>
+                </div>
+
+                <div class="glass-card bento-item item-icons reveal-up">
+                    <img class="bento-bg" src="assets/icons.webp" alt="Icons">
+                    <div class="bento-content">
+                        <div class="mono">ICONS</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="evidence-locker" class="container">
+        <div class="reveal-up">
+            <div class="mono">06 // APPLICATIONS</div>
+            <h2>Evidence Locker</h2>
+            <p style="color: var(--text-mute);">System deployed across all touchpoints.</p>
+        </div>
+        <div class="gallery-grid reveal-up">
+            <div class="gallery-item">
+                <div class="gallery-label">APPLICATION</div>
+                <img class="gallery-img" src="assets/application.webp" alt="Business Cards">
+            </div>
+            <div class="gallery-item">
+                <div class="gallery-label">VISION</div>
+                <div class="video-container">
+                    <div class="video-container">
+                        <video autoplay muted loop playsinline class="gallery-img"
+                            style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
+                            <source src="assets/video.webm" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                </div>
+                <!--<img class="gallery-img"
+                    src="https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=2874&auto=format&fit=crop"
+                    alt="Mobile App">-->
+            </div>
+            <div class="gallery-item wide">
+                <div class="gallery-label">BANNER</div>
+                <img class="gallery-img" src="assets/banner.webp" alt="Pitch Deck">
+            </div>
+        </div>
+    </section>
+
+    <section id="terminal" class="container">
+        <div class="reveal-up">
+            <div class="mono">07 // KEY LEARNINGS</div>
+            <h2>Deep Analysis</h2>
+            <div class="terminal-window">
+                <div class="term-header">
+                    <div class="dot" style="background: #ff5f56;"></div>
+                    <div class="dot" style="background: #ffbd2e;"></div>
+                    <div class="dot" style="background: #27c93f;"></div><span
+                        style="margin-left: 1rem; font-size: 0.8rem;">israr_studio_log.txt</span>
+                </div>
+                <div class="term-body">
+                    <p>> INITIATING REFLECTION...</p>
+                    <p>> ANALYZING ADVANTAGE...</p>
+                    <p style="color: #ff5f56;">> Technical Fluency Detected.</p>
+                    <p style="margin-bottom: 1rem;">My forensics and cybersecurity background allowed me to understand
+                        risk hedging
+                        and technicalities immediately. I focused on solving brand challenges from Day 1.</p>
+                    <p style="color: #27c93f;">> STATUS: CASE CLOSED.</p>
+                    <p>> <span class="cursor">_</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="witness" class="container">
+        <div class="reveal-up">
+            <div class="mono">08 // WITNESS STATEMENT</div>
+            <h2 class="quote-block">"The tagline targets exactly the emotion we want... It makes investing feel like
+                responsibility, not gambling."</h2>
+            <div class="mono" style="margin-top: 2rem; color: var(--accent-green);">— FOUNDERS, BAKKENGROW</div>
+        </div>
+    </section>
+
+    <footer id="profile">
+        <div class="container footer-layout reveal-up">
+
+            <div class="footer-left">
+                <div class="mono">CASE FILE CLOSED</div>
+                <h2 style="font-size: 3.5rem; line-height: 1; margin: 0;">ISRAR AHMED</h2>
+                <p style="font-size: 1.2rem; color: var(--text-mute); margin: 0;">
+                    Strategic Identity for Technical Clients
+                </p>
+                <div style="margin-top: 2rem; opacity: 0.5; font-size: 0.9rem;">
+                    © 2025 Israr Studio. All rights reserved.
+                </div>
+            </div>
+
+            <div class="footer-right">
+                <a href="mailto:i.israrahmed08@gmail.com" class="contact-link">
+                    <span>EMAIL</span>
+                    i.israrahmed08@gmail.com
+                </a> <a href="https://linktr.ee/israr._.ahmed" class="contact-link">
+                    <span>CONNECT</span>
+                    LinkedIn Profile ↗
+                </a> <a href="#" class="contact-link">
+                    <span>CHAT</span>
+                    WhatsApp ↗
+                </a>
+            </div>
+
+        </div>
+    </footer>
+
+    <script>
+        // 1. PRELOADER LOGIC
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('loaded');
+            }, 1200); // 1.2s display time
+        });
+
+        // 2. SCROLL REVEAL
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { entry.target.classList.add('active'); }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.reveal-up').forEach(el => observer.observe(el));
+
+        // 3. NAV SCROLL EFFECT & ACTIVE STATE
+        const nav = document.querySelector('nav');
+        const navLinks = document.querySelectorAll('.nav-links a');
+        const sections = document.querySelectorAll('section, header, footer');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) { nav.classList.add('scrolled'); }
+            else { nav.classList.remove('scrolled'); }
+        });
+
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    navLinks.forEach(link => link.classList.remove('active'));
+                    const id = entry.target.getAttribute('id');
+                    const activeLink = document.querySelector(`.nav-links a[href="#${id}"]`);
+                    if (activeLink) activeLink.classList.add('active');
+                }
+            });
+        }, { threshold: 0.3 });
+        sections.forEach(sec => navObserver.observe(sec));
+
+        // 4. SCROLLYTELLING LOGIC
+        const stepCards = document.querySelectorAll('.step-card');
+        const stickyImages = document.querySelectorAll('.scrolly-visual img');
+
+        const stepObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    stepCards.forEach(c => c.classList.remove('active'));
+                    entry.target.classList.add('active');
+                    const targetId = entry.target.getAttribute('data-img');
+                    stickyImages.forEach(img => {
+                        img.classList.remove('active');
+                        if (img.id === targetId) { img.classList.add('active'); }
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        stepCards.forEach(card => stepObserver.observe(card));
+    </script>
+</body>
+
+</html>
